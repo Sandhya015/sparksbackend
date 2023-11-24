@@ -1,11 +1,4 @@
 <?php
-$servername = "localhost"; 
-$username = "root"; 
-$Email = ""; 
-$dbname = "sparks";
-
-
-$conn = new mysqli($servername, $username, $Email, $dbname);
 
 
 if ($conn->connect_error) {
@@ -13,20 +6,41 @@ if ($conn->connect_error) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = $_POST["username"];
-    $Email = $_POST["Email"];
+    $inputUsername = $_POST["username"];
+    $inputPassword = $_POST["password"];
 
+    // You should hash the password before storing it in the database and compare hashed passwords
+    $query = "SELECT * FROM UserLogin WHERE username = '$inputUsername' AND password = '$inputPassword'";
     
-    $hashedemail= Email_hash($Email, PASSWORD_DEFAULT);
+    $result = $conn->query($query);
 
-    $sql = "INSERT INTO users (username,email) VALUES ('$username', '$hashedemail')";
-
-    if ($conn->query($sql) === TRUE) {
-        echo "Registration successful!";
+    if ($result->num_rows > 0) {
+        // User authenticated successfully
+        echo "Login successful!";
+        // You can redirect the user to a dashboard or another page here
     } else {
-        echo "Error: " . $sql . "<br>" . $conn->error;
+        echo "Login failed!";
     }
 }
 
 $conn->close();
 ?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login Form</title>
+</head>
+<body>
+    <h2>Login</h2>
+    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br><br>
+        
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br><br>
+        
+        <input type="submit" value="Login">
+    </form>
+</body>
+</html>

@@ -49,6 +49,7 @@
 
 </head>
 <body>
+    <?php include("./graph.php"); ?>
     <div class="dashboard">
         <h1>Patient Records Dashboard</h1>
 
